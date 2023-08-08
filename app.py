@@ -9,11 +9,13 @@ from model import db,User
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = b'\x06\xf5\xb5\xe6\xf7\x1c\xbd\r\xc5e\xef\xb2\xf1\xcb`\xd8'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.db'
+app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://stephen:YimCD13DIPozlkpp3ECvSSAxchLb9GKe@dpg-cj8bsqs5kgrc73eu4o3g-a.oregon-postgres.render.com/ubereats_c355'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -138,7 +140,7 @@ def get_one_users(user_id):
     # pass
  
 @app.route('/user', methods=['POST'])
-def user():
+def promote_user():
     data = request.get_json()
 
     hashed_password = generate_password_hash(data['password'], method='scrypt')
@@ -150,7 +152,7 @@ def user():
     return ({'message':'Welcome user'})
 
 @app.route('/user/<user_id>', methods=['PATCH'])
-def promote_user(user_id):
+def user(user_id):
     user = User.query.filter_by(user_id=user_id).first()
 
     if not user:
@@ -172,8 +174,22 @@ def delete_user(user_id):
     db.session.commit()
     
     return jsonify({'message': 'User has been deleted'})
-    
 
+@app.route('/search', methods=['POST','GET'])
+def search():
+    user = User.query.filter().all()
+
+    
+    if user is None:
+        return jsonify({'message': 'User not found'})
+    
+    # return jsonify({'message': f'{user=user.username}'})
+    # query = request.args.get("query")
+    # users = user.query.filter(users.title.like("%"+query+"%")).all()
+    # return jsonify({'message': f'{users}'})
+
+    # pass
+   
 if __name__ == '__main__':
     # with app.app_context():
     #     db.create_all()
