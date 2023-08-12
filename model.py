@@ -11,16 +11,16 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
-    user_role = db.Column(db.String, default=False)
+    type = db.Column(db.Boolean)
     blocked = db.Column(db.Boolean, default=False)
     activity = db.Column(db.Boolean, default=False)
 
-    def __init__(self,username, email, password, user_role, blocked, activity):
+    def __init__(self,username, email, password, type, blocked, activity):
         # self.user_id = user_id
         self.username = username
         self.email = email
         self.password = password
-        self.user_role = user_role
+        self.type = type
         self.blocked = blocked
         self.activity = activity
 
